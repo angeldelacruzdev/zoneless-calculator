@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostBinding, input, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, input, output, signal, viewChild, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'calculator-button',
@@ -7,11 +7,17 @@ import { ChangeDetectionStrategy, Component, HostBinding, input, OnInit, ViewEnc
   styleUrl: './calculator-button.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'w-1/4 border-r border-b border-indigo-400'
+    class: 'w-1/4 border-r border-b border-indigo-400',
+    '[class.w-2/4]': 'isDobleSize()',
+    '[class.w-1/4]': '!isDobleSize()'
   },
   encapsulation: ViewEncapsulation.None
 })
-export class CalculatorButtonComponent implements OnInit {
+export class CalculatorButtonComponent {
+  public isPressed = signal(false)
+  public onClick = output<string>()
+  public contentValue = viewChild<ElementRef<HTMLButtonElement>>('button');
+
   public isCommand = input(false, {
     transform: (value: boolean | string) => typeof value === 'string' ? value === '' : value
   })
@@ -21,18 +27,27 @@ export class CalculatorButtonComponent implements OnInit {
   })
 
 
-  ngOnInit(): void {
-    console.log(this.isDobleSize(), 'hola')
+  handleClick() {
+    if (!this.contentValue()?.nativeElement) return;
+
+    const value = this.contentValue()?.nativeElement.innerText;
+
+    this.onClick.emit(`${value?.trim()}`)
   }
 
+  public keyBoardPressedStyle(key: string) {
+    console.log(this.contentValue())
+    if (!this.contentValue()) return;
 
+    const value = this.contentValue()!.nativeElement.innerText;
 
-  // @HostBinding('class.isCommand') get commandStyle() {
-  //   return this.isCommand()
-  // }
+    if (value != key) return;
 
-  @HostBinding('class.w-2/4') get commandStyle() {
-    return this.isDobleSize()
+    this.isPressed.set(true);
+
+    setTimeout(() => {
+      this.isPressed.set(false);
+    }, 100)
+
   }
-
 }
