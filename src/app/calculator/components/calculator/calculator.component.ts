@@ -1,4 +1,4 @@
- import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CalculatorButtonComponent } from '../calculator-button/calculator-button.component';
 
 @Component({
@@ -7,5 +7,6 @@ import { CalculatorButtonComponent } from '../calculator-button/calculator-butto
   imports: [CalculatorButtonComponent],
   templateUrl: './calculator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
-export class CalculatorComponent {}
+export class CalculatorComponent { }
